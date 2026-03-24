@@ -586,48 +586,18 @@
 
   <!-- 
   ========================================================
-  FACEBOOK MESSENGER CHAT PLUGIN INTEGRATION INSTRUCTIONS
+  FLOATING MESSENGER BUTTON (Using m.me link)
   ========================================================
-  To set up your Facebook Messenger Chat Plugin here:
-  
-  1. Go to your Facebook Page settings -> New Pages Experience -> Advanced Messaging.
-  2. Or, go to Meta Business Suite -> Inbox -> Settings (gear icon) -> Chat Plugin.
-  3. Add the website domain (e.g., https://jdelosreyes888.github.io) to your allowlist.
-  4. Copy your Facebook Page ID.
-  5. Replace "YOUR_PAGE_ID_HERE" in the script below with your actual Page ID.
-  
-  The chat icon will automatically appear in the lower right corner 
-  once configured properly and accessed via a published environment.
+  Since Meta deprecated the embeddable Chat Plugin on May 9, 2024,
+  the standard and current way to provide a chat widget is through
+  a seamless direct link to your Messenger inbox using m.me.
+  It opens the chat interface perfectly on both mobile and desktop.
   -->
-
-  <!-- Messenger Chat Plugin Code -->
-  <div id="fb-root"></div>
-  <div id="fb-customer-chat" class="fb-customerchat"></div>
-
-  <script>
-    var chatbox = document.getElementById('fb-customer-chat');
-    // Replace YOUR_PAGE_ID_HERE with your Facebook Page ID
-    chatbox.setAttribute("page_id", "117081717631");
-    chatbox.setAttribute("attribution", "biz_inbox");
-  </script>
-
-  <!-- Your SDK code -->
-  <script>
-    window.fbAsyncInit = function () {
-      FB.init({
-        xfbml: true,
-        version: 'v18.0'
-      });
-    };
-
-    (function (d, s, id) {
-      var js, fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) return;
-      js = d.createElement(s); js.id = id;
-      js.src = 'https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js';
-      fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
-  </script>
+  <a href="https://m.me/SJDEFIcollege" target="_blank" class="messenger-float" aria-label="Chat with us on Messenger">
+    <svg viewBox="0 0 36 36" fill="currentColor" height="34" width="34" xmlns="http://www.w3.org/2000/svg">
+      <path d="M18 2C9.163 2 2 8.802 2 17.185c0 4.793 2.373 9.022 6.027 11.838-.17 2.126-1.127 4.19-2.887 5.766a.822.822 0 0 0 .524 1.408c3.27-.14 6.223-1.666 8.35-3.832 1.305.286 2.658.435 4.026.435 8.837 0 16-6.802 16-15.185S26.837 2 18 2zm1.096 20.306-3.844-4.106c-.4-.428-1.077-.45-1.503-.05l-5.368 5.04c-.6.564-1.5-.136-1.1-1.002l4.825-10.468c.313-.679 1.134-1.012 1.838-.7l3.844 4.106c.4.428 1.077.45 1.503.05l5.368-5.04c.6-.564 1.5.136 1.1 1.002l-4.825 10.468c-.313.68-1.134 1.013-1.838.7z"/>
+    </svg>
+  </a>
 
 </body>
 
