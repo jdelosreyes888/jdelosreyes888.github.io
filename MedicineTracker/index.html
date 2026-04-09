@@ -1,1 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medicine Tracker — Never Miss a Dose</title>
+    <style>
+        /* ── Reset & base ─────────────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --primary:      #1e88e5;
+            --primary-dark: #1565c0;
+            --accent:       #43a047;
+            --danger:       #e53935;
+            --warning:      #f9a825;
+            --text:         #1a1a2e;
+            --text-sec:     #555577;
+            --surface:      #ffffff;
+            --bg:           #f0f4f8;
+            --border:       #dde4ef;
+            --radius:       16px;
+            --radius-sm:    10px;
+            --shadow:       0 4px 24px rgba(30,136,229,.12);
+            --shadow-lg:    0 8px 40px rgba(30,136,229,.18);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ── Utility ──────────────────────────────────────────── */
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+        .text-primary { color: var(--primary); }
+        .text-accent  { color: var(--accent);  }
+
+        /* ── Nav ──────────────────────────────────────────────── */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            background: rgba(255,255,255,.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+        }
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        .nav-logo .logo-icon { font-size: 28px; }
+        .nav-cta {
+            background: var(--primary);
+            color: #fff;
+            padding: 9px 22px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: background .2s, transform .15s;
+        }
+        .nav-cta:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+        /* ── Hero ─────────────────────────────────────────────── */
+        .hero {
+            background: linear-gradient(135deg, #1565c0 0%, #1e88e5 50%, #42a5f5 100%);
+            color: #fff;
+            padding: 140px 0 100px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255,255,255,.18);
+            border: 1px solid rgba(255,255,255,.3);
+            padding: 6px 18px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: .5px;
+            margin-bottom: 24px;
+        }
+        .hero h1 {
+            font-size: clamp(2.2rem, 5vw, 3.8rem);
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .hero h1 span {
+            background: linear-gradient(90deg, #fff 0%, #bbdefb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            opacity: .88;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            position: relative;
+        }
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+        }
+        .btn-hero-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #fff;
+            color: var(--primary-dark);
+            padding: 15px 34px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 16px;
+            text-decoration: none;
+            box-shadow: 0 6px 24px rgba(0,0,0,.2);
+            transition: transform .2s, box-shadow .2s;
+        }
+        .btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(0,0,0,.25); }
+        .btn-hero-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,.15);
+            color: #fff;
+            padding: 15px 34px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            text-decoration: none;
+            border: 2px solid rgba(255,255,255,.4);
+            transition: background .2s, transform .2s;
+        }
+        .btn-hero-secondary:hover { background: rgba(255,255,255,.25); transform: translateY(-2px); }
+
+        /* Hero phone mockup */
+        .hero-phone {
+            margin-top: 64px;
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+        .phone-frame {
+            width: 220px;
+            background: #fff;
+            border-radius: 36px;
+            padding: 12px;
+            box-shadow: 0 24px 80px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.2);
+            position: relative;
+        }
+        .phone-screen {
+            background: #f0f4f8;
+            border-radius: 26px;
+            overflow: hidden;
+            padding: 16px 12px;
+        }
+        .mock-header {
+            background: var(--primary);
+            border-radius: 12px;
+            padding: 12px;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .mock-header .mock-title { font-size: 13px; font-weight: 700; }
+        .mock-header .mock-date  { font-size: 10px; opacity: .8; }
+        .mock-stat-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+        .mock-stat {
+            background: #fff;
+            border-radius: 8px;
+            padding: 6px 4px;
+            text-align: center;
+            box-shadow: 0 1px 4px rgba(0,0,0,.08);
+        }
+        .mock-stat .mv { font-size: 14px; font-weight: 700; color: var(--primary); }
+        .mock-stat .ml { font-size: 8px;  color: #888; }
+        .mock-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 8px;
+            box-shadow: 0 1px 4px rgba(0,0,0,.08);
+        }
+        .mock-card-name { font-size: 11px; font-weight: 700; color: var(--text); }
+        .mock-card-sub  { font-size: 9px;  color: #888; margin-bottom: 5px; }
+        .mock-bar { height: 5px; background: #e0e0e0; border-radius: 3px; overflow: hidden; }
+        .mock-bar-fill { height: 100%; border-radius: 3px; }
+
+        /* ── Section titles ───────────────────────────────────── */
+        .section { padding: 96px 0; }
+        .section-alt { background: var(--surface); }
+        .section-label {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+        .section-title {
+            text-align: center;
+            font-size: clamp(1.7rem, 3vw, 2.5rem);
+            font-weight: 800;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+        .section-sub {
+            text-align: center;
+            font-size: 1.05rem;
+            color: var(--text-sec);
+            max-width: 580px;
+            margin: 0 auto 64px;
+        }
+
+        /* ── Features grid ────────────────────────────────────── */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 28px;
+        }
+        .feature-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 32px 28px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: transform .2s, box-shadow .2s;
+        }
+        .section-alt .feature-card { background: var(--bg); }
+        .feature-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            margin-bottom: 18px;
+        }
+        .feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; }
+        .feature-card p  { font-size: .95rem; color: var(--text-sec); line-height: 1.65; }
+
+        /* ── Benefits strip ───────────────────────────────────── */
+        .benefits-strip {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 24px;
+            text-align: center;
+        }
+        .benefit-item { padding: 24px 16px; }
+        .benefit-num {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+        .benefit-label { font-size: .95rem; color: var(--text-sec); font-weight: 500; }
+
+        /* ── How it works ─────────────────────────────────────── */
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 32px;
+            counter-reset: step;
+        }
+        .step {
+            text-align: center;
+            padding: 16px;
+        }
+        .step-num {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin: 0 auto 18px;
+            box-shadow: 0 4px 14px rgba(30,136,229,.35);
+        }
+        .step h3  { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+        .step p   { font-size: .9rem; color: var(--text-sec); }
+
+        /* ── Testimonials ─────────────────────────────────────── */
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        .testimonial-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 28px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+        .stars { color: #f9a825; font-size: 18px; margin-bottom: 14px; }
+        .testimonial-text {
+            font-size: .95rem;
+            color: var(--text-sec);
+            line-height: 1.7;
+            margin-bottom: 18px;
+            font-style: italic;
+        }
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .author-name  { font-weight: 700; font-size: .9rem; }
+        .author-label { font-size: .8rem; color: var(--text-sec); }
+
+        /* ── CTA banner ───────────────────────────────────────── */
+        .cta-banner {
+            background: linear-gradient(135deg, #1565c0 0%, #1e88e5 100%);
+            border-radius: 24px;
+            padding: 64px 40px;
+            text-align: center;
+            color: #fff;
+            box-shadow: 0 12px 48px rgba(30,136,229,.3);
+            margin: 0 24px;
+        }
+        .cta-banner h2 { font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 800; margin-bottom: 12px; }
+        .cta-banner p  { font-size: 1.05rem; opacity: .88; margin-bottom: 36px; max-width: 500px; margin-left: auto; margin-right: auto; }
+
+        /* ── Google Play button ───────────────────────────────── */
+        .play-store-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 14px;
+            background: #000;
+            color: #fff;
+            padding: 14px 28px;
+            border-radius: 12px;
+            text-decoration: none;
+            border: 2px solid rgba(255,255,255,.15);
+            transition: transform .2s, background .2s;
+        }
+        .play-store-btn:hover { background: #1a1a1a; transform: translateY(-2px); }
+        .play-store-icon { font-size: 32px; }
+        .play-store-text .ps-line1 { font-size: 10px; opacity: .75; letter-spacing: .5px; text-transform: uppercase; }
+        .play-store-text .ps-line2 { font-size: 20px; font-weight: 700; line-height: 1.1; }
+        .play-store-badge {
+            display: inline-block;
+            background: rgba(255,255,255,.1);
+            border: 1px solid rgba(255,255,255,.2);
+            padding: 4px 14px;
+            border-radius: 50px;
+            font-size: 12px;
+            margin-top: 16px;
+            opacity: .75;
+        }
+
+        /* ── Footer ───────────────────────────────────────────── */
+        footer {
+            background: #0d1b2a;
+            color: #aab4c4;
+            text-align: center;
+            padding: 40px 24px;
+            font-size: .9rem;
+        }
+        footer .footer-logo {
+            font-size: 22px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+        footer p { margin-bottom: 6px; }
+        footer a { color: var(--primary); text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+
+        /* ── Responsive ───────────────────────────────────────── */
+        @media (max-width: 640px) {
+            .hero   { padding: 120px 0 80px; }
+            .section { padding: 64px 0; }
+            .cta-banner { padding: 48px 24px; margin: 0 12px; }
+            .phone-frame { width: 180px; }
+            .mock-stat .mv { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── Navigation ──────────────────────────────────────────────── -->
+<nav>
+    <div class="container nav-inner">
+        <a href="#" class="nav-logo">
+            <span class="logo-icon">&#128138;</span>
+            Medicine Tracker
+        </a>
+        <a href="#download" class="nav-cta">Download Free</a>
+    </div>
+</nav>
+
+<!-- ── Hero ────────────────────────────────────────────────────── -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-badge">&#127381; Free &middot; No Account Needed &middot; Works Offline</div>
+        <h1>Your Medications,<br><span>Always Under Control</span></h1>
+        <p>
+            Medicine Tracker makes it effortless to manage your daily medicines,
+            track your stock levels, and get timely refill reminders — all from
+            your Android phone.
+        </p>
+        <div class="hero-actions">
+            <a href="#download" class="btn-hero-primary">
+                &#9654; Get it on Google Play
+            </a>
+            <a href="#features" class="btn-hero-secondary">
+                &#8595; See Features
+            </a>
+        </div>
+
+        <!-- Phone mockup -->
+        <div class="hero-phone">
+            <div class="phone-frame">
+                <div class="phone-screen">
+                    <div class="mock-header">
+                        <div class="mock-title">&#128138; Medicine Tracker</div>
+                        <div class="mock-date">April 09, 2026</div>
+                    </div>
+                    <div class="mock-stat-row">
+                        <div class="mock-stat"><div class="mv">4</div><div class="ml">Total</div></div>
+                        <div class="mock-stat"><div class="mv" style="color:#16a34a">3</div><div class="ml">In Stock</div></div>
+                        <div class="mock-stat"><div class="mv" style="color:#d97706">1</div><div class="ml">Low</div></div>
+                        <div class="mock-stat"><div class="mv" style="color:#dc2626">0</div><div class="ml">Empty</div></div>
+                    </div>
+                    <div class="mock-card">
+                        <div class="mock-card-name">Amlodipine 5mg</div>
+                        <div class="mock-card-sub">Maintenance &mdash; 14 days left</div>
+                        <div class="mock-bar"><div class="mock-bar-fill" style="width:65%;background:#16a34a"></div></div>
+                    </div>
+                    <div class="mock-card">
+                        <div class="mock-card-name">Metformin 500mg</div>
+                        <div class="mock-card-sub">Maintenance &mdash; 3 days left</div>
+                        <div class="mock-bar"><div class="mock-bar-fill" style="width:12%;background:#d97706"></div></div>
+                    </div>
+                    <div class="mock-card">
+                        <div class="mock-card-name">Vitamin D3 1000IU</div>
+                        <div class="mock-card-sub">Vitamin &mdash; 22 days left</div>
+                        <div class="mock-bar"><div class="mock-bar-fill" style="width:80%;background:#16a34a"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── Benefits numbers ─────────────────────────────────────────── -->
+<section class="section section-alt">
+    <div class="container">
+        <div class="benefits-strip">
+            <div class="benefit-item">
+                <div class="benefit-num">100%</div>
+                <div class="benefit-label">Free — no subscription, no hidden fees</div>
+            </div>
+            <div class="benefit-item">
+                <div class="benefit-num">0</div>
+                <div class="benefit-label">Accounts required — works offline</div>
+            </div>
+            <div class="benefit-item">
+                <div class="benefit-num">24h</div>
+                <div class="benefit-label">Alert snooze so you stay in control</div>
+            </div>
+            <div class="benefit-item">
+                <div class="benefit-num">&#8734;</div>
+                <div class="benefit-label">Medicines you can track at once</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── Features ─────────────────────────────────────────────────── -->
+<section class="section" id="features">
+    <div class="container">
+        <div class="section-label">Features</div>
+        <h2 class="section-title">Everything You Need to Stay on Track</h2>
+        <p class="section-sub">
+            Simple enough for everyday use, powerful enough to handle your
+            entire household's medication inventory.
+        </p>
+        <div class="features-grid">
+
+            <div class="feature-card">
+                <div class="feature-icon">&#128202;</div>
+                <h3>Real-Time Inventory Tracking</h3>
+                <p>
+                    See exactly how many tablets remain for every medicine. A live
+                    progress bar and colour-coded status (Good → Low → Critical → Empty)
+                    give you an instant visual health check.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">&#128276;</div>
+                <h3>Low-Stock Refill Alerts</h3>
+                <p>
+                    Set a custom refill threshold for each medicine. When stock
+                    drops below it, you get a push notification before you run out —
+                    not after.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">&#128197;</div>
+                <h3>Dose Schedule Management</h3>
+                <p>
+                    Assign Morning, Noon, Evening, or Night dose slots — or enter a
+                    custom daily count. The app automatically calculates consumption
+                    and days remaining.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">&#128176;</div>
+                <h3>Cost & Expense Tracking</h3>
+                <p>
+                    Log purchase prices and restock costs. See your cost-per-tablet,
+                    monthly spend estimate, and total amount spent — all without a
+                    separate spreadsheet.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">&#10133;</div>
+                <h3>One-Tap Restocking</h3>
+                <p>
+                    Bought a new supply? Add tablets instantly from the detail screen.
+                    Every restock is saved to a timestamped history so you always
+                    have a full purchase record.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">&#128203;</div>
+                <h3>Full Transaction Log</h3>
+                <p>
+                    Every add, update, restock, and delete is logged with a timestamp.
+                    Export the log to share with your doctor or caregiver in one tap.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">&#128190;</div>
+                <h3>Backup & Data Export</h3>
+                <p>
+                    Your data is automatically backed up locally so it survives app
+                    updates. Export your entire medicine list as a JSON file to keep
+                    a personal copy.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">&#128274;</div>
+                <h3>Fully Offline &amp; Private</h3>
+                <p>
+                    All data stays on your device. No internet connection required,
+                    no account to create, and no personal data ever sent to a server.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">&#128277;</div>
+                <h3>Alert Snooze</h3>
+                <p>
+                    Already aware of a low-stock situation? Snooze the alert for
+                    24 hours so you're not repeatedly reminded about the same item
+                    while you wait for your prescription.
+                </p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ── How it works ─────────────────────────────────────────────── -->
+<section class="section section-alt">
+    <div class="container">
+        <div class="section-label">How It Works</div>
+        <h2 class="section-title">Up and Running in Under 2 Minutes</h2>
+        <p class="section-sub">No tutorials needed. Just install, add your medicines, and you're done.</p>
+        <div class="steps">
+            <div class="step">
+                <div class="step-num">1</div>
+                <h3>Add Your Medicine</h3>
+                <p>Enter the name, category, quantity purchased, price, and dose schedule. Takes less than 30 seconds.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <h3>Set a Refill Reminder</h3>
+                <p>Choose a tablet threshold (e.g., 10) and the app will notify you automatically when stock gets low.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <h3>Track Daily Progress</h3>
+                <p>Open the app any time to see days remaining, stock status, and cost summary for every medicine.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">4</div>
+                <h3>Restock in One Tap</h3>
+                <p>When you pick up a new supply, add tablets directly from the detail screen and your counts update instantly.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── Testimonials ─────────────────────────────────────────────── -->
+<section class="section">
+    <div class="container">
+        <div class="section-label">What Users Say</div>
+        <h2 class="section-title">Loved by Patients &amp; Caregivers</h2>
+        <p class="section-sub">Real feedback from people managing daily maintenance medicines.</p>
+        <div class="testimonials-grid">
+
+            <div class="testimonial-card">
+                <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="testimonial-text">
+                    "I take three maintenance medicines every day and always forgot when
+                    to refill. This app reminds me before I run out — it literally saved
+                    me from skipping doses."
+                </p>
+                <div class="testimonial-author">
+                    <div class="author-avatar" style="background:#e3f2fd">&#128110;</div>
+                    <div>
+                        <div class="author-name">Maria S.</div>
+                        <div class="author-label">Hypertension patient, 58</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="testimonial-text">
+                    "I manage my elderly parents' medications. Having everything in one
+                    place with cost tracking is a game-changer. I used to use a notebook!"
+                </p>
+                <div class="testimonial-author">
+                    <div class="author-avatar" style="background:#e8f5e9">&#128105;</div>
+                    <div>
+                        <div class="author-name">Ryan T.</div>
+                        <div class="author-label">Family caregiver</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="testimonial-text">
+                    "Super clean interface. I checked five other apps and they all
+                    required sign-ups or subscriptions. This one just works — offline,
+                    instantly, for free."
+                </p>
+                <div class="testimonial-author">
+                    <div class="author-avatar" style="background:#fff3e0">&#128104;</div>
+                    <div>
+                        <div class="author-name">Carlo M.</div>
+                        <div class="author-label">Diabetic patient, 44</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ── Download CTA ─────────────────────────────────────────────── -->
+<section class="section" id="download" style="padding-top:0;">
+    <div class="cta-banner">
+        <div style="font-size:48px;margin-bottom:16px;">&#128138;</div>
+        <h2>Start Tracking Your Medicines Today</h2>
+        <p>
+            Free to download. No account. No ads. Works completely offline.
+            Your health data stays on your device — always.
+        </p>
+
+        <!-- Google Play Store placeholder link -->
+        <a href="https://play.google.com/store/apps/details?id=com.medicinetracker.app"
+           class="play-store-btn"
+           target="_blank"
+           rel="noopener noreferrer"
+           title="Coming soon on Google Play">
+            <span class="play-store-icon">&#9654;</span>
+            <span class="play-store-text">
+                <span class="ps-line1">Get it on</span>
+                <span class="ps-line2">Google Play</span>
+            </span>
+        </a>
+
+        <br>
+        <span class="play-store-badge">&#128336; Coming Soon — Link will be updated on launch</span>
+    </div>
+</section>
+
+<!-- ── Footer ───────────────────────────────────────────────────── -->
+<footer>
+    <div class="footer-logo">&#128138; Medicine Tracker</div>
+    <p>Built with care for patients and caregivers everywhere.</p>
+    <p style="margin-top:16px;font-size:.8rem;opacity:.6;">
+        &copy; 2026 Medicine Tracker. All rights reserved.<br>
+        This app does not provide medical advice. Always consult your doctor or pharmacist.
+    </p>
+</footer>
+
+</body>
+</html>
 
