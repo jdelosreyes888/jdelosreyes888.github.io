@@ -1123,6 +1123,20 @@
       margin-top: 0.35rem;
     }
 
+    .scholarship-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.7rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      background: rgba(244, 176, 0, 0.12);
+      color: #9d7300;
+      border: 1px solid rgba(244, 176, 0, 0.3);
+      margin-top: 0.4rem;
+      font-weight: 600;
+    }
+
     .program-link {
       font-weight: 600;
       color: var(--blue-light);
