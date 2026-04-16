@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Development and Well-Being Organizational Chart - SJDEFI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link href="css/styles.css?v2" rel="stylesheet" />
+  <style>
+    /* 
+      Organizational Chart Specific Styles
+      Following a Responsive, Modern Card-based Tree Design
+    */
+    body {
+      background-color: #f1f5f9;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .org-header {
+      text-align: center;
+      padding: 3rem 1rem 1rem;
+      background: linear-gradient(135deg, var(--blue-deep) 0%, #1e40af 100%);
+      color: white;
+      margin-bottom: 2rem;
+    }
+
+    .org-header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      letter-spacing: 1px;
+    }
+
+    .org-header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    /* Container for the org chart */
+    .org-chart-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Node Styles */
+    .org-node {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      padding: 1.25rem 1rem;
+      width: 280px;
+      text-align: center;
+      position: relative;
+      border-top: 4px solid var(--gold);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 1rem;
+      
+      /* Entrance Animation */
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+      animation: fadeInUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      animation-delay: var(--delay, 0s);
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .org-node:hover {
+      transform: translateY(-5px) !important;
+      box-shadow: 0 12px 20px -3px rgba(0, 0, 0, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    .org-node-img {
+      width: 75px;
+      height: 75px;
+      border-radius: 50%;
+      background-color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.75rem;
+      border: 3px solid white;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      overflow: hidden;
+      position: relative;
+      /* Image pulse animation */
+      animation: pulseImg 2.5s infinite alternate ease-in-out;
+      animation-delay: var(--delay, 0s);
+    }
+
+    @keyframes pulseImg {
+      from { box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+      to { box-shadow: 0 4px 20px rgba(30, 58, 138, 0.3); }
+    }
+
+    .org-node-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .org-node:hover .org-node-img img {
+      transform: scale(1.1);
+    }
+
+    .org-node-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--blue-deep);
+      margin-bottom: 0.25rem;
+      line-height: 1.2;
+    }
+
+    .org-node-role {
+      font-size: 0.8rem;
+      color: #64748b;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Hierarchical Structure Lines */
+    .org-level {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      width: 100%;
+    }
+
+    /* Vertical line down from a parent */
+    .has-children::after {
+      content: '';
+      position: absolute;
+      bottom: -1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2px;
+      height: 1rem;
+      background-color: var(--blue-deep);
+      z-index: 1;
+    }
+
+    /* Connection container for children */
+    .org-branches {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      width: 100%;
+      position: relative;
+      padding-top: 1rem;
+    }
+
+    @media (min-width: 992px) {
+      .org-branches {
+        flex-direction: row;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 3rem;
+      }
+
+      /* Horizontal line connecting branches */
+      .org-branches::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 25%;
+        right: 25%;
+        height: 2px;
+        background-color: var(--blue-deep);
+        z-index: 1;
+      }
+      
+      /* Vertical lines extending down to branch headers */
+      .branch > .branch-header-wrapper::before {
+        content: '';
+        position: absolute;
+        top: -1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 2px;
+        height: 1rem;
+        background-color: var(--blue-deep);
+        z-index: 1;
+      }
+
+      /* Special case for top level vertical lines */
+      .top-chain {
+        position: relative;
+        padding-bottom: 1.5rem;
+      }
+      .top-chain::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 2px;
+        height: 1.5rem;
+        background-color: var(--blue-deep);
+        z-index: 1;
+      }
+    }
+
+    .branch {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    /* Branch group styling */
+    .branch-header-wrapper {
+      position: relative;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    .branch-header {
+      background: var(--blue-deep);
+      color: white;
+      padding: 0.75rem 2.5rem 0.75rem 1.5rem;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      margin-bottom: 2rem;
+      position: relative;
+      text-align: center;
+      z-index: 2;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .branch-header:hover {
+      background: #1e40af;
+      transform: scale(1.02);
+    }
+
+    /* Chevron icon for collapsible */
+    .branch-header::after {
+      content: '▼';
+      position: absolute;
+      right: 1.25rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.8rem;
+      transition: transform 0.3s ease;
+    }
+
+    .branch-header.collapsed::after {
+      transform: translateY(-50%) rotate(-90deg);
+    }
+
+    /* Collapsible Content Wrapper */
+    .branch-content {
+      width: 100%;
+      display: grid;
+      grid-template-rows: 1fr;
+      transition: grid-template-rows 0.4s ease-out, opacity 0.4s ease-out;
+      opacity: 1;
+    }
+
+    .branch-content.collapsed {
+      grid-template-rows: 0fr;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .branch-content-inner {
+      overflow: hidden;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* Grids for members */
+    .members-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 600px;
+      padding-bottom: 1rem; /* Prevent shadow clipping */
+    }
+
+    @media (min-width: 640px) {
+      .members-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    /* Style adjusting for individuals in grid */
+    .members-grid .org-node {
+      width: 100%;
+      margin-bottom: 0;
+      border-top-color: #3b82f6; /* Lighter blue for Student Affairs */
+    }
+    
+    .club-advisers .org-node {
+      border-top-color: #10b981; /* Green for Club Advisers */
+    }
+
+    .nav { z-index: 1000; }
+  </style>
+</head>
+<body>
+
+  <!-- Header / Navigation -->
+  <header>
+    <div class="container container-wide">
+      <nav class="nav">
+        <div class="nav-left">
+          <div class="nav-logos">
+            <img src="images/DC-SLMES-Logo.png" alt="SJDEFI Logo" class="nav-logo" onerror="this.style.display='none'">
+            <img src="images/logo.png" alt="SJDEFI Logo" class="nav-logo" onerror="this.style.display='none'">
+          </div>
+          <div class="nav-branding">
+            <div class="nav-title-main">SJDEFI-College</div>
+            <div class="nav-subtitle">San Juan De Dios Educational Foundation, Inc.</div>
+          </div>
+        </div>
+        <div class="nav-toggle" aria-label="Toggle navigation">
+          <span></span><span></span><span></span>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <div class="org-header">
+    <div class="container">
+      <h1>Student Development and Well-Being</h1>
+      <p>ORGANIZATIONAL CHART</p>
+    </div>
+  </div>
+
+  <section class="section" style="padding-top: 0;">
+    <div class="org-chart-container">
+      
+      <!-- Top Level Hierarchy -->
+      <div class="org-level" style="gap: 1.5rem; margin-bottom: 2rem;">
+        
+        <div class="top-chain" style="display:flex; flex-direction:column; align-items:center;">
+          <div class="org-node has-children" style="--delay: 0.1s;">
+            <div class="org-node-img">
+              <img src="https://ui-avatars.com/api/?name=Sister+Maria+Luisa+B+Javier&background=0f172a&color=fff&size=150" alt="Sister Maria Luisa B. Javier">
+            </div>
+            <div class="org-node-name">SISTER MARIA LUISA B. JAVIER, DC</div>
+            <div class="org-node-role">President</div>
+          </div>
+        </div>
+
+        <div class="top-chain" style="display:flex; flex-direction:column; align-items:center;">
+          <div class="org-node has-children" style="--delay: 0.2s;">
+            <div class="org-node-img">
+              <img src="https://ui-avatars.com/api/?name=Dr+Rosana+C+Tala&background=1e3a8a&color=fff&size=150" alt="Dr. Rosana C. Tala">
+            </div>
+            <div class="org-node-name">DR. ROSANA C. TALA, RMT, LPT</div>
+            <div class="org-node-role">Vice President for Education</div>
+          </div>
+        </div>
+
+        <div class="top-chain" style="display:flex; flex-direction:column; align-items:center;">
+          <div class="org-node has-children" style="--delay: 0.3s;">
+            <div class="org-node-img">
+              <img src="https://ui-avatars.com/api/?name=Jayson+C+Javier&background=1e3a8a&color=fff&size=150" alt="Jayson C. Javier">
+            </div>
+            <div class="org-node-name">JAYSON C. JAVIER, PTRP, MA.Ed.</div>
+            <div class="org-node-role">Director, Student Development and Well-Being</div>
+          </div>
+        </div>
+
+        <div class="top-chain" style="display:flex; flex-direction:column; align-items:center;">
+          <div class="org-node" style="border-top-color: #64748b; --delay: 0.4s;">
+            <div class="org-node-img">
+              <img src="https://ui-avatars.com/api/?name=Heide+L+Eufena&background=64748b&color=fff&size=150" alt="Heide L. Eufena">
+            </div>
+            <div class="org-node-name">HEIDE L. EUFENA</div>
+            <div class="org-node-role">Staff, Student Development and Well-Being</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Branches -->
+      <div class="org-branches">
+        
+        <!-- Left Branch: Student Affairs -->
+        <div class="branch">
+          <div class="branch-header-wrapper">
+            <div class="branch-header" onclick="toggleBranch(this)">Student Affairs and Services Council</div>
+          </div>
+          <div class="branch-content">
+            <div class="branch-content-inner">
+              <div class="members-grid student-affairs">
+                
+                <div class="org-node" style="--delay: 0.5s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Sister+Lilia+Q+Angeles&background=3b82f6&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">SISTER LILIA Q. ANGELES, DC</div>
+                  <div class="org-node-role">Coordinator, Food Services</div>
+                </div>
+                <div class="org-node" style="--delay: 0.6s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Jayson+C+Javier&background=3b82f6&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">JAYSON C. JAVIER, PTRP, MA.Ed.</div>
+                  <div class="org-node-role">Coordinator, Student Activities</div>
+                </div>
+                <div class="org-node" style="--delay: 0.7s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Armie+B+Almine&background=3b82f6&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">ARMIE B. ALMINE, LPT, MPM</div>
+                  <div class="org-node-role">Coordinator, Student Formation</div>
+                </div>
+                <div class="org-node" style="--delay: 0.8s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Liberty+S+Arcilla&background=3b82f6&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">LIBERTY S. ARCILLA, RN</div>
+                  <div class="org-node-role">Coordinator, Health Services</div>
+                </div>
+                <div class="org-node" style="--delay: 0.9s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Loida+S+Hermo&background=3b82f6&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">LOIDA S. HERMO, LPT, RGO</div>
+                  <div class="org-node-role">Coordinator, Guidance Services</div>
+                </div>
+                <div class="org-node" style="--delay: 1.0s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Rogel+D+Gean&background=3b82f6&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">ROGEL D. GEAN, MBA, SO2</div>
+                  <div class="org-node-role">Coordinator, Safety & Security</div>
+                </div>
+                <div class="org-node" style="--delay: 1.1s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Ma+Rowena+F+Montealegre&background=3b82f6&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">MA. ROWENA F. MONTEALEGRE, RSW, MSSW</div>
+                  <div class="org-node-role">Coordinator, Scholarship and Financial Assistance</div>
+                </div>
+                <div class="org-node" style="--delay: 1.2s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Charlene+Pabaya&background=3b82f6&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">CHARLENE PABAYA, PTRP</div>
+                  <div class="org-node-role">Coordinator, Promotions</div>
+                </div>
+                <div class="org-node" style="--delay: 1.3s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Nerlmalyn+P+Gilhang&background=3b82f6&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">NERLMALYN P. GILHANG, LPT, MPM</div>
+                  <div class="org-node-role">Coordinator, Admissions</div>
+                </div>
+                <div class="org-node" style="--delay: 1.4s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Ma+Elisa+Vargas&background=3b82f6&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">MA. ELISA VARGAS</div>
+                  <div class="org-node-role">Coordinator, Dormitory</div>
+                </div>
+                <div class="org-node" style="--delay: 1.5s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Lerry+Anne+Basa&background=3b82f6&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">LERRY ANNE BASA</div>
+                  <div class="org-node-role">Guidance Associates</div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Branch: Club Advisers -->
+        <div class="branch">
+          <div class="branch-header-wrapper">
+            <div class="branch-header" style="background: #047857;" onclick="toggleBranch(this)">Club Advisers and Moderators</div>
+          </div>
+          <div class="branch-content">
+            <div class="branch-content-inner">
+              <div class="members-grid club-advisers">
+                
+                <div class="org-node" style="--delay: 0.5s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Armando+Dumatal&background=10b981&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">ARMANDO DUMATAL, LPT</div>
+                  <div class="org-node-role">Adviser, Supreme Student Government & Student Central Board</div>
+                </div>
+                <div class="org-node" style="--delay: 0.6s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Armie+B+Almine&background=10b981&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">ARMIE B. ALMINE, LPT, MPM</div>
+                  <div class="org-node-role">Moderator, Society of Saint Vincent De Paul</div>
+                </div>
+                <div class="org-node" style="--delay: 0.7s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Nerlmalyn+P+Gilhang&background=10b981&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">NERLMALYN P. GILHANG, LPT, MPM</div>
+                  <div class="org-node-role">Moderator, Children of Mary / Vicentian Marian Youth</div>
+                </div>
+                <div class="org-node" style="--delay: 0.8s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Jayson+C+Javier&background=10b981&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">JAYSON C. JAVIER, PTRP, MA.Ed.</div>
+                  <div class="org-node-role">Moderator, Sports Club</div>
+                </div>
+                <div class="org-node" style="--delay: 0.9s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Ronald+Sorilla&background=10b981&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">RONALD SORILLA, LPT</div>
+                  <div class="org-node-role">Moderator, SJDEFI Dance Troupe</div>
+                </div>
+                <div class="org-node" style="--delay: 1.0s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Dr+Jesus+Trix+Ponsaran&background=10b981&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">DR. JESUS TRIX PONSARAN</div>
+                  <div class="org-node-role">Moderator, Red Cross Youth Council</div>
+                </div>
+                <div class="org-node" style="--delay: 1.1s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Ma+Rowena+F+Montealegre&background=10b981&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">MA. ROWENA F. MONTEALEGRE, RSW, MSSW</div>
+                  <div class="org-node-role">Moderator, Environmental Science Frontier</div>
+                </div>
+                <div class="org-node" style="--delay: 1.2s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Sharon+De+Jesus&background=10b981&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">SHARON DE JESUS, RN, MAN</div>
+                  <div class="org-node-role">Adviser, Nursing Student Association</div>
+                </div>
+                <div class="org-node" style="--delay: 1.3s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Margie+A+Buenavista&background=10b981&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">MARGIE A. BUENAVISTA, DPT, PTRP, RPT</div>
+                  <div class="org-node-role">Adviser, Physical Therapy Student Association</div>
+                </div>
+                <div class="org-node" style="--delay: 1.4s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Grazielle+Ann+Uy&background=10b981&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">GRAZIELLE ANN UY, MSHRM</div>
+                  <div class="org-node-role">Adviser, Association of Junior Hotelier and Restaurateur</div>
+                </div>
+                <div class="org-node" style="--delay: 1.5s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Rogel+D+Gean&background=10b981&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">ROGEL D. GEAN, MBA, SO2</div>
+                  <div class="org-node-role">Adviser, Young Entrepreneur Society</div>
+                </div>
+                <div class="org-node" style="--delay: 1.6s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Christian+Luzande&background=10b981&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">CHRISTIAN LUZANDE, LPT</div>
+                  <div class="org-node-role">Moderator, STEM Club</div>
+                </div>
+                <div class="org-node" style="--delay: 1.7s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Lerma+Ga-an&background=10b981&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">LERMA GA-AN</div>
+                  <div class="org-node-role">Moderator, Negotium Societas</div>
+                </div>
+                <div class="org-node" style="--delay: 1.8s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Diosdado+T+Almine&background=10b981&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">DIOSDADO T. ALMINE, MRS, MATH</div>
+                  <div class="org-node-role">Moderator, Marillac Chorale, Campus Ministry, Vincentian Volunteers</div>
+                </div>
+                <div class="org-node" style="--delay: 1.9s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Ruffa+Mae+Bangug&background=10b981&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">RUFFA MAE BANGUG, LPT</div>
+                  <div class="org-node-role">Moderator, El Circulo Teatro</div>
+                </div>
+                <div class="org-node" style="--delay: 2.0s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Julie+Ann+Salmonte&background=10b981&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">JULIE ANN SALMONTE, RN, MAN, MAP</div>
+                  <div class="org-node-role">Moderator, Peer Facilitators Group</div>
+                </div>
+                <div class="org-node" style="--delay: 2.1s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Duane+S+Reyes&background=10b981&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">DUANE S. REYES, RMT, MPH</div>
+                  <div class="org-node-role">Adviser, Medical Technology Student Association</div>
+                </div>
+                <div class="org-node" style="--delay: 2.2s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Dr+Marilyn+J+Mabalot&background=10b981&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">DR. MARILYN J. MABALOT, LPT</div>
+                  <div class="org-node-role">Adviser, Junior Office Administration Society / Moderator, One Blazon</div>
+                </div>
+                <div class="org-node" style="--delay: 2.3s;">
+                  <div class="org-node-img"><img src="https://ui-avatars.com/api/?name=Ma+Margarita+Amorante&background=10b981&color=fff&size=150" alt="Avatar"></div>
+                  <div class="org-node-name">MA. MARGARITA AMORANTE, LPT</div>
+                  <div class="org-node-role">Moderator, HUMSS Club</div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <footer style="margin-top: 4rem;">
+    <div class="container">
+      <div class="footer-inner">
+        <div>
+          © <span id="year"></span> San Juan De Dios Educational Foundation, Inc. – College.
+          All rights reserved.
+        </div>
+        <div class="footer-links">
+          <a href="#">Contact us</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // Collapsible branch headers logic
+    function toggleBranch(element) {
+      element.classList.toggle('collapsed');
+      
+      const content = element.parentElement.nextElementSibling;
+      // The content wrapper itself has the grid animation classes
+      if (content) {
+        content.classList.toggle('collapsed');
+      }
+    }
+  </script>
+
+</body>
+</html>
