@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Picture Gallery Website</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            padding: 2rem 1rem;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .feature-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        .section-header h2 {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .picture-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            min-height: 100px;
+        }
+
+        .picture-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .picture-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .picture-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .picture-item .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(231, 76, 60, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .picture-item:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #95a5a6;
+            font-style: italic;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #95a5a6;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #2c3e50;
+        }
+
+        .modal h3 {
+            margin-bottom: 1.5rem;
+            color: #2c3e50;
+        }
+
+        #fileInput {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            border: 2px dashed #bdc3c7;
+            border-radius: 10px;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+
+        #fileInput:hover {
+            border-color: #667eea;
+        }
+
+        .modal-content button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            width: 100%;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .modal-content button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        #preview-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .preview-item {
+            position: relative;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .upload-btn {
+                width: 100%;
+            }
+            
+            .picture-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 1rem;
+            }
+            
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>My Picture Gallery</h1>
+        <p>Upload and organize your photos across three different topics</p>
+    </header>
+
+    <main>
+        <section class="feature-section" id="travel">
+            <div class="section-header">
+                <h2>🌍 Travel Adventures</h2>
+                <button class="upload-btn" onclick="openUploadModal('travel')">Add Pictures</button>
+            </div>
+            <div class="picture-grid" id="travel-grid">
+                <div class="empty-state">No pictures yet. Click "Add Pictures" to get started!</div>
+            </div>
+        </section>
+
+        <section class="feature-section" id="food">
+            <div class="section-header">
+                <h2>🍕 Food & Cuisine</h2>
+                <button class="upload-btn" onclick="openUploadModal('food')">Add Pictures</button>
+            </div>
+            <div class="picture-grid" id="food-grid">
+                <div class="empty-state">No pictures yet. Click "Add Pictures" to get started!</div>
+            </div>
+        </section>
+
+        <section class="feature-section" id="nature">
+            <div class="section-header">
+                <h2>🌿 Nature & Wildlife</h2>
+                <button class="upload-btn" onclick="openUploadModal('nature')">Add Pictures</button>
+            </div>
+            <div class="picture-grid" id="nature-grid">
+                <div class="empty-state">No pictures yet. Click "Add Pictures" to get started!</div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Upload Modal -->
+    <div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeUploadModal()">&times;</span>
+            <h3>Upload Pictures</h3>
+            <input type="file" id="fileInput" multiple accept="image/*" onchange="handleFileSelect(event)">
+            <button onclick="uploadPictures()">Upload</button>
+            <div id="preview-container"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentCategory = '';
+        let selectedFiles = [];
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPicturesFromStorage();
+            updateEmptyStates();
+        });
+
+        function openUploadModal(category) {
+            currentCategory = category;
+            const modal = document.getElementById('uploadModal');
+            const fileInput = document.getElementById('fileInput');
+            const previewContainer = document.getElementById('preview-container');
+            
+            // Reset modal state
+            fileInput.value = '';
+            selectedFiles = [];
+            previewContainer.innerHTML = '';
+            
+            modal.style.display = 'block';
+        }
+
+        function closeUploadModal() {
+            const modal = document.getElementById('uploadModal');
+            modal.style.display = 'none';
+            currentCategory = '';
+            selectedFiles = [];
+        }
+
+        function handleFileSelect(event) {
+            const files = event.target.files;
+            const previewContainer = document.getElementById('preview-container');
+            
+            selectedFiles = Array.from(files);
+            previewContainer.innerHTML = '';
+            
+            selectedFiles.forEach((file, index) => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        const previewItem = document.createElement('div');
+                        previewItem.className = 'preview-item';
+                        previewItem.innerHTML = `
+                            <img src="${e.target.result}" alt="Preview ${index + 1}">
+                        `;
+                        previewContainer.appendChild(previewItem);
+                    };
+                    
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        function uploadPictures() {
+            if (selectedFiles.length === 0) {
+                alert('Please select at least one image file.');
+                return;
+            }
+            
+            const grid = document.getElementById(`${currentCategory}-grid`);
+            
+            selectedFiles.forEach((file, index) => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        const pictureItem = createPictureItem(e.target.result, index);
+                        grid.appendChild(pictureItem);
+                        
+                        // Save to localStorage
+                        savePictureToStorage(currentCategory, e.target.result);
+                        
+                        // Update empty state
+                        updateEmptyState(currentCategory);
+                    };
+                    
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            closeUploadModal();
+        }
+
+        function createPictureItem(imageSrc, index) {
+            const pictureItem = document.createElement('div');
+            pictureItem.className = 'picture-item';
+            pictureItem.innerHTML = `
+                <img src="${imageSrc}" alt="Picture ${index + 1}">
+                <button class="delete-btn" onclick="deletePicture(this, '${currentCategory}')">×</button>
+            `;
+            return pictureItem;
+        }
+
+        function deletePicture(button, category) {
+            const pictureItem = button.parentElement;
+            const img = pictureItem.querySelector('img');
+            const imageSrc = img.src;
+            
+            // Remove from DOM
+            pictureItem.remove();
+            
+            // Remove from localStorage
+            removePictureFromStorage(category, imageSrc);
+            
+            // Update empty state
+            updateEmptyState(category);
+        }
+
+        function savePictureToStorage(category, imageSrc) {
+            const storageKey = `pictures_${category}`;
+            let pictures = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            
+            // Check if image already exists
+            if (!pictures.includes(imageSrc)) {
+                pictures.push(imageSrc);
+                localStorage.setItem(storageKey, JSON.stringify(pictures));
+            }
+        }
+
+        function removePictureFromStorage(category, imageSrc) {
+            const storageKey = `pictures_${category}`;
+            let pictures = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            
+            pictures = pictures.filter(pic => pic !== imageSrc);
+            localStorage.setItem(storageKey, JSON.stringify(pictures));
+        }
+
+        function loadPicturesFromStorage() {
+            const categories = ['travel', 'food', 'nature'];
+            
+            categories.forEach(category => {
+                const storageKey = `pictures_${category}`;
+                const pictures = JSON.parse(localStorage.getItem(storageKey) || '[]');
+                const grid = document.getElementById(`${category}-grid`);
+                
+                pictures.forEach((imageSrc, index) => {
+                    const pictureItem = createPictureItem(imageSrc, index);
+                    grid.appendChild(pictureItem);
+                });
+            });
+        }
+
+        function updateEmptyStates() {
+            const categories = ['travel', 'food', 'nature'];
+            
+            categories.forEach(category => {
+                updateEmptyState(category);
+            });
+        }
+
+        function updateEmptyState(category) {
+            const grid = document.getElementById(`${category}-grid`);
+            const pictures = grid.querySelectorAll('.picture-item');
+            
+            // Remove existing empty state message
+            const existingEmptyState = grid.querySelector('.empty-state');
+            if (existingEmptyState) {
+                existingEmptyState.remove();
+            }
+            
+            // Add empty state message if no pictures
+            if (pictures.length === 0) {
+                const emptyState = document.createElement('div');
+                emptyState.className = 'empty-state';
+                emptyState.textContent = 'No pictures yet. Click "Add Pictures" to get started!';
+                grid.appendChild(emptyState);
+            }
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('uploadModal');
+            if (event.target === modal) {
+                closeUploadModal();
+            }
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeUploadModal();
+            }
+        });
+    </script>
+</body>
+</html>

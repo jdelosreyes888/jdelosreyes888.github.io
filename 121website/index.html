@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Picture Gallery Website</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>My Picture Gallery</h1>
+        <p>Upload and organize your photos across three different topics</p>
+    </header>
+
+    <main>
+        <section class="feature-section" id="travel">
+            <div class="section-header">
+                <h2>🌍 Travel Adventures</h2>
+                <button class="upload-btn" onclick="openUploadModal('travel')">Add Pictures</button>
+            </div>
+            <div class="content-container">
+                <div class="picture-grid" id="travel-grid">
+                    <!-- Pictures will be dynamically added here -->
+                </div>
+                <div class="description-content">
+                    <h3>About Travel Adventures</h3>
+                    <p>Share your amazing travel experiences from around the world. From breathtaking landscapes to cultural discoveries, capture every moment of your journeys.</p>
+                    <ul>
+                        <li>Document your adventures</li>
+                        <li>Share travel tips</li>
+                        <li>Connect with fellow travelers</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature-section" id="food">
+            <div class="section-header">
+                <h2>🍕 Food & Cuisine</h2>
+                <button class="upload-btn" onclick="openUploadModal('food')">Add Pictures</button>
+            </div>
+            <div class="content-container">
+                <div class="picture-grid" id="food-grid">
+                    <!-- Pictures will be dynamically added here -->
+                </div>
+                <div class="description-content">
+                    <h3>About Food & Cuisine</h3>
+                    <p>Explore culinary delights from various cuisines. Share your favorite dishes, cooking experiments, and restaurant discoveries.</p>
+                    <ul>
+                        <li>Recipe collections</li>
+                        <li>Restaurant reviews</li>
+                        <li>Cooking techniques</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature-section" id="nature">
+            <div class="section-header">
+                <h2>🌿 Nature & Wildlife</h2>
+                <button class="upload-btn" onclick="openUploadModal('nature')">Add Pictures</button>
+            </div>
+            <div class="content-container">
+                <div class="picture-grid" id="nature-grid">
+                    <!-- Pictures will be dynamically added here -->
+                </div>
+                <div class="description-content">
+                    <h3>About Nature & Wildlife</h3>
+                    <p>Capture the beauty of the natural world. From majestic wildlife to serene landscapes, document your encounters with nature.</p>
+                    <ul>
+                        <li>Wildlife photography</li>
+                        <li>Landscape captures</li>
+                        <li>Nature conservation</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Upload Modal -->
+    <div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeUploadModal()">&times;</span>
+            <h3>Upload Pictures</h3>
+            <input type="file" id="fileInput" multiple accept="image/*" onchange="handleFileSelect(event)">
+            <button onclick="uploadPictures()">Upload</button>
+            <div id="preview-container"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

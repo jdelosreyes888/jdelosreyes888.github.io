@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Collection - Home</title>
+    <link rel="stylesheet" href="home-styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body.home-bg::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://lh3.googleusercontent.com/d/1IkXXLgk63uygUdQcIIlZxiO6uFULh6ro');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            opacity: 0.2;
+            z-index: -2;
+            pointer-events: none;
+        }
+        body.home-bg::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 235, 59, 0.3);
+            z-index: -1;
+            pointer-events: none;
+        }
+        h1:hover, h2:hover, h3:hover, p:hover, .nav-link:hover {
+            transform: translateY(-2px) scale(1.05);
+            transition: all 0.3s ease;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            font-size: 1.1em;
+        }
+        .navbar:hover {
+            transform: translateY(-2px) scale(1.05);
+            transition: all 0.3s ease;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body class="home-bg">
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>My Collection</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="home.html" class="nav-link active">HOME</a></li>
+                <li><a href="lattes-matcha.html" class="nav-link">Lattes & Matcha</a></li>
+                <li><a href="instagram-thrifts.html" class="nav-link">Instagram Thrifts</a></li>
+                <li><a href="blindboxes-figurines.html" class="nav-link">Blindboxes & Figurines</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="home-main">
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title" style="font-size: 2.2em;">OVERCONSUMPTION & WHAT NOT</h1>
+                <p class="hero-subtitle">Matchas, Thrifts, and Addiction</p>
+            </div>
+        </section>
+
+        <section class="collections-grid">
+            <div class="collection-card">
+                <div class="card-image">
+                    <img src="https://lh3.googleusercontent.com/d/167oscATnMbyUitC2otNTgoIjwOIWmj1i" alt="Lattes & Matcha">
+                </div>
+                <div class="card-content">
+                    <h3>Lattes & Matcha</h3>
+                    <p>My thoughts on the new coffee shop trends</p>
+                    <a href="lattes-matcha.html" class="card-btn">Explore</a>
+                </div>
+            </div>
+
+            <div class="collection-card">
+                <div class="card-image">
+                    <img src="https://lh3.googleusercontent.com/d/15VDYw7S6cDiMygWsBhaIcb9eRHlUOiGI" alt="Instagram Thrifts">
+                </div>
+                <div class="card-content">
+                    <h3>Instagram Thrifts</h3>
+                    <p>Where my wardrobe comes from</p>
+                    <a href="instagram-thrifts.html" class="card-btn">Explore</a>
+                </div>
+            </div>
+
+            <div class="collection-card">
+                <div class="card-image">
+                    <img src="https://lh3.googleusercontent.com/d/1iHROIAOeTFY7FrV5U6u4gKjmF63fqpr7" alt="Blindboxes & Figurines">
+                </div>
+                <div class="card-content">
+                    <h3>Blindboxes & Figurines</h3>
+                    <p>A secret addiction..</p>
+                    <a href="blindboxes-figurines.html" class="card-btn">Explore</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2024 My Collection. All rights reserved.</p>
+    </footer>
+</body>
+</html>
